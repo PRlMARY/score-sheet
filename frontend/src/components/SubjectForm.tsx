@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Subject, GradingCriteria } from '../types';
+import type { Subject, GradingCriteria } from '../types';
 import { defaultGradingCriteria, generateId } from '../utils/grading';
 import { X, Plus, Trash2 } from 'lucide-react';
 
