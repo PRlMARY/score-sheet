@@ -126,24 +126,24 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
   const [showColumnForm, setShowColumnForm] = useState(false);
   const [editingColumn, setEditingColumn] = useState<ScoreColumn | null>(null);
   const [showLearnerForm, setShowLearnerForm] = useState(false);
-  const [editingLearner, setEditingLearner] = useState<{id?: string, name: string, learnerId: string} | null>(null);
+  const [editingLearner, setEditingLearner] = useState<{ id?: string, name: string, learnerId: string } | null>(null);
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
   const [updatedGroup, setUpdatedGroup] = useState<Group>(group);
 
   useEffect(() => {
     // Recalculate all computed columns when scores change
     const newGroup = { ...updatedGroup };
-    
+
     newGroup.learners = newGroup.learners.map(learner => {
       const newScores = { ...learner.scores };
-      
+
       // Calculate sum columns
       newGroup.columns.filter(col => col.type === 'sum').forEach(col => {
         if (col.sourceColumns) {
           newScores[col.id] = calculateSum(learner, col.sourceColumns);
         }
       });
-      
+
       // Calculate grade columns
       newGroup.columns.filter(col => col.type === 'grade').forEach(col => {
         if (col.sourceColumns && col.sourceColumns.length > 0) {
@@ -153,10 +153,10 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
           }
         }
       });
-      
+
       return { ...learner, scores: newScores };
     });
-    
+
     setUpdatedGroup(newGroup);
   }, [gradingCriteria]);
 
@@ -168,14 +168,14 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
     newGroup.learners = newGroup.learners.map(learner => {
       if (learner.id === learnerId) {
         const newScores = { ...learner.scores, [columnId]: numValue };
-        
+
         // Recalculate dependent columns
         newGroup.columns.filter(col => col.type === 'sum').forEach(col => {
           if (col.sourceColumns) {
             newScores[col.id] = calculateSum({ ...learner, scores: newScores }, col.sourceColumns);
           }
         });
-        
+
         newGroup.columns.filter(col => col.type === 'grade').forEach(col => {
           if (col.sourceColumns && col.sourceColumns.length > 0) {
             const sourceScore = newScores[col.sourceColumns[0]];
@@ -184,12 +184,12 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
             }
           }
         });
-        
+
         return { ...learner, scores: newScores };
       }
       return learner;
     });
-    
+
     setUpdatedGroup(newGroup);
     onUpdateGroup(newGroup);
   };
@@ -200,14 +200,14 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
       id: generateId(),
       sourceColumns: columnData.sourceColumns ?? [],
     };
-    
+
     const newGroup = { ...updatedGroup };
     const columns = [...newGroup.columns];
-    
+
     // Separate different types of columns
     const scoreAndSumColumns = columns.filter(col => col.type === 'score' || col.type === 'sum');
     const gradeColumns = columns.filter(col => col.type === 'grade');
-    
+
     // Insert new column based on its type
     if (newColumn.type === 'score' || newColumn.type === 'sum') {
       // Add to the end of score/sum columns, before grade columns
@@ -217,7 +217,7 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
       // Grade columns go to the end
       newGroup.columns = [...scoreAndSumColumns, ...gradeColumns, newColumn];
     }
-    
+
     setUpdatedGroup(newGroup);
     onUpdateGroup(newGroup);
     setShowColumnForm(false);
@@ -226,16 +226,16 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
   const handleUpdateColumn = (updatedColumn: ScoreColumn) => {
     const newGroup = {
       ...updatedGroup,
-      columns: updatedGroup.columns.map(col => 
-        col.id === updatedColumn.id 
-          ? { 
-              ...updatedColumn, 
-              sourceColumns: updatedColumn.sourceColumns ?? [] 
-            }
+      columns: updatedGroup.columns.map(col =>
+        col.id === updatedColumn.id
+          ? {
+            ...updatedColumn,
+            sourceColumns: updatedColumn.sourceColumns ?? []
+          }
           : col
       ),
     };
-    
+
     setUpdatedGroup(newGroup);
     onUpdateGroup(newGroup);
     setEditingColumn(null);
@@ -252,7 +252,7 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
           return { ...learner, scores: newScores };
         }),
       };
-      
+
       setUpdatedGroup(newGroup);
       onUpdateGroup(newGroup);
     }
@@ -287,18 +287,18 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
   const reorderableColumns = updatedGroup.columns.filter(
     col => (col.type === 'score' || col.type === 'sum') && !['learnerId', 'learnerName'].includes(col.id)
   );
-  
+
   const gradeColumns = updatedGroup.columns.filter(col => col.type === 'grade');
-  
+
   // Helper function to check if learner IDs are sequential numeric
   const isSequentialNumericIds = () => {
     const numericIds = updatedGroup.learners
       .map(l => parseInt(l.learnerId))
       .filter(id => !isNaN(id))
       .sort((a, b) => a - b);
-    
+
     if (numericIds.length !== updatedGroup.learners.length) return false;
-    
+
     for (let i = 0; i < numericIds.length; i++) {
       if (numericIds[i] !== i + 1) return false;
     }
@@ -311,15 +311,15 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
       .map(l => parseInt(l.learnerId))
       .filter(id => !isNaN(id))
       .sort((a, b) => a - b);
-    
+
     if (numericIds.length === 0) return '1';
-    
+
     // Check if IDs are sequential starting from 1
     const isSequential = isSequentialNumericIds();
     if (isSequential) {
       return (numericIds.length + 1).toString();
     }
-    
+
     // If not sequential, find the next available number
     let nextId = 1;
     for (const id of numericIds) {
@@ -347,15 +347,15 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
   const handleDeleteLearner = (learnerId: string) => {
     if (confirm('Are you sure you want to delete this learner? This action cannot be undone.')) {
       const wasSequential = isSequentialNumericIds();
-      
+
       const newGroup = {
         ...updatedGroup,
         learners: updatedGroup.learners.filter(l => l.id !== learnerId)
       };
-      
+
       if (wasSequential && newGroup.learners.length > 0) {
         const shouldReassign = confirm('Do you want the system to automatically reassign Learner IDs to maintain sequence (1, 2, 3...)?');
-        
+
         if (shouldReassign) {
           newGroup.learners = newGroup.learners.map((learner, index) => ({
             ...learner,
@@ -363,7 +363,7 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
           }));
         }
       }
-      
+
       setUpdatedGroup(newGroup);
       onUpdateGroup(newGroup);
     }
@@ -374,18 +374,18 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
     const isDuplicateId = updatedGroup.learners.some(
       l => l.learnerId === learnerData.learnerId && l.id !== learnerData.id
     );
-    
+
     if (isDuplicateId) {
       alert('A learner with this ID already exists. Please use a unique ID.');
       return;
     }
 
     const newGroup = { ...updatedGroup };
-    
+
     if (learnerData.id) {
       // Update existing learner
-      newGroup.learners = newGroup.learners.map(l => 
-        l.id === learnerData.id 
+      newGroup.learners = newGroup.learners.map(l =>
+        l.id === learnerData.id
           ? { ...l, name: learnerData.name, learnerId: learnerData.learnerId }
           : l
       );
@@ -399,7 +399,7 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
       };
       newGroup.learners = [...newGroup.learners, newLearner];
     }
-    
+
     setUpdatedGroup(newGroup);
     onUpdateGroup(newGroup);
     setShowLearnerForm(false);
@@ -410,24 +410,24 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
   const handleColumnReorder = (draggedId: string, targetId: string) => {
     const newGroup = { ...updatedGroup };
     const columns = [...newGroup.columns];
-    
+
     // Separate columns: score/sum are reorderable, grade columns stay at end
     const reorderableColumns = columns.filter(col => col.type === 'score' || col.type === 'sum');
     const gradeColumns = columns.filter(col => col.type === 'grade');
-    
+
     const draggedIndex = reorderableColumns.findIndex(col => col.id === draggedId);
     const targetIndex = reorderableColumns.findIndex(col => col.id === targetId);
-    
+
     if (draggedIndex === -1 || targetIndex === -1) return;
-    
+
     // Remove dragged column and insert at target position
     const [draggedColumn] = reorderableColumns.splice(draggedIndex, 1);
     reorderableColumns.splice(targetIndex, 0, draggedColumn!);
-    
+
     // Rebuild columns array: reordered score/sum columns + grade columns at end
     // This ensures sum columns can be reordered with their calculations intact
     newGroup.columns = [...reorderableColumns, ...gradeColumns];
-    
+
     setUpdatedGroup(newGroup);
     onUpdateGroup(newGroup);
   };
@@ -442,13 +442,11 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
           >
             <ArrowLeft size={24} />
           </button>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-200">{updatedGroup.name}</h1>
-            <p className="text-gray-600">{updatedGroup.learners.length} learners</p>
-          </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-200">{updatedGroup.name}</h1>
         </div>
-        
-        <div className="flex flex-wrap gap-2">
+
+        <div className="flex flex-wrap gap-2 items-center">
+          <p className="text-gray-600">{updatedGroup.learners.length} learners</p>
           <button
             onClick={handleAddLearner}
             className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
@@ -472,19 +470,18 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
             <thead className="bg-gray-50">
               <tr>
                 {fixedColumns.map((column) => (
-                  <th 
-                    key={column.id} 
+                  <th
+                    key={column.id}
                     className="px-4 py-3 text-left text-sm font-medium text-gray-900 sticky left-0 bg-gray-50 z-10"
                   >
                     {column.name}
                   </th>
                 ))}
                 {reorderableColumns.map((column) => (
-                  <th 
-                    key={column.id} 
-                    className={`px-4 py-3 text-center text-sm font-medium text-gray-900 min-w-[120px] cursor-move ${
-                      draggedColumn === column.id ? 'opacity-50' : ''
-                    }`}
+                  <th
+                    key={column.id}
+                    className={`px-4 py-3 text-center text-sm font-medium text-gray-900 min-w-[120px] cursor-move ${draggedColumn === column.id ? 'opacity-50' : ''
+                      }`}
                     draggable
                     onDragStart={() => setDraggedColumn(column.id)}
                     onDragEnd={() => setDraggedColumn(null)}
@@ -518,8 +515,8 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
                   </th>
                 ))}
                 {gradeColumns.map((column) => (
-                  <th 
-                    key={column.id} 
+                  <th
+                    key={column.id}
                     className="px-4 py-3 text-center text-sm font-medium text-gray-900 min-w-[120px]"
                   >
                     <div className="flex items-center justify-center gap-2">
@@ -587,7 +584,7 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
                         />
                       ) : (
                         <span className="text-sm font-medium text-gray-900">
-                          {typeof learner.scores[column.id] === 'number' 
+                          {typeof learner.scores[column.id] === 'number'
                             ? (learner.scores[column.id] as number).toFixed(1)
                             : '-'
                           }
@@ -611,7 +608,7 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
                         </span>
                       ) : (
                         <span className="text-sm font-medium text-gray-900">
-                          {typeof learner.scores[column.id] === 'number' 
+                          {typeof learner.scores[column.id] === 'number'
                             ? (learner.scores[column.id] as number).toFixed(1)
                             : '-'
                           }
@@ -642,7 +639,7 @@ export const ScoreTable: React.FC<ScoreTableProps> = ({
       {/* Column Form Modal */}
       {(showColumnForm || editingColumn) && (
         <ColumnForm
-        column={editingColumn || undefined}
+          column={editingColumn || undefined}
           availableColumns={reorderableColumns.filter(col => col.type === 'score' || col.type === 'sum')}
           onSave={(columnData) => {
             if (editingColumn) {

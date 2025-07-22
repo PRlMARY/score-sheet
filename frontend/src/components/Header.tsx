@@ -1,6 +1,7 @@
-import { LogOut, User, GraduationCap } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
+import graduationCap from '../assets/graduation-cap.svg';
 
 export const Header: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -9,12 +10,11 @@ export const Header: React.FC = () => {
     <header className="bg-white dark:bg-gray-800 shadow-soft border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+          
           {/* Logo and Title */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <div className="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <GraduationCap className="h-5 w-5 text-white" />
-              </div>
+              <img src={graduationCap} alt="Logo" className="h-9 w-9" />
               <h1 className="ml-3 text-xl font-bold text-gray-900 dark:text-white">
                 ScoreSheet
               </h1>

@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import bcrypt from 'bcryptjs';
 
 interface User {
   id: string;
@@ -55,7 +56,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Get stored users
       const storedUsers = JSON.parse(localStorage.getItem('scoresheet-users') || '[]');
       const foundUser = storedUsers.find((u: any) => 
-        u.username === username && u.password === password
+        u.username === username && bcrypt.compareSync(password, u.password)
       );
       
       if (foundUser) {
@@ -92,11 +93,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return false;
       }
       
-      // Create new user
+      // Hash the password before storing
+      const hashedPassword = bcrypt.hashSync(password, 10);
       const newUser = {
         id: Math.random().toString(36).substr(2, 9),
         username,
-        password,
+        password: hashedPassword,
       };
       
       storedUsers.push(newUser);

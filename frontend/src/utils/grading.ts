@@ -1,4 +1,4 @@
-import { GradingCriteria, ScoreColumn, Learner } from '../types';
+import type { GradingCriteria, Learner } from '../interfaces';
 
 export const calculateSum = (
   learner: Learner,
@@ -36,10 +36,10 @@ export const getGradeColor = (
 };
 
 export const defaultGradingCriteria: GradingCriteria[] = [
-  { id: '1', grade: 'A', minScore: 90, color: '#10b981' },
-  { id: '2', grade: 'B', minScore: 80, color: '#3b82f6' },
-  { id: '3', grade: 'C', minScore: 70, color: '#f59e0b' },
-  { id: '4', grade: 'D', minScore: 60, color: '#f97316' },
+  { id: '1', grade: 'A', minScore: 80, color: '#10b981' },
+  { id: '2', grade: 'B', minScore: 70, color: '#3b82f6' },
+  { id: '3', grade: 'C', minScore: 60, color: '#f59e0b' },
+  { id: '4', grade: 'D', minScore: 50, color: '#f97316' },
   { id: '5', grade: 'F', minScore: 0, color: '#ef4444' },
 ];
 

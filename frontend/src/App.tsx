@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Subject } from './types';
+import type { Subject } from './interfaces';
 import { SubjectList } from './components/SubjectList';
 import { SubjectDetail } from './components/SubjectDetail';
 import { SubjectForm } from './components/SubjectForm';

@@ -93,7 +93,7 @@ export const SubjectDetail: React.FC<SubjectDetailProps> = ({
           >
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">{subject.name}</h1>
+          <h1 className="text-3xl font-bold text-gray-200">{subject.name}</h1>
         </div>
 
         <div className="flex gap-2">
