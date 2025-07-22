@@ -15,6 +15,7 @@ export interface ScoreColumn {
 export interface Learner {
   id: string;
   name: string;
+  learnerId: string;
   scores: Record<string, number | string>;
 }
 

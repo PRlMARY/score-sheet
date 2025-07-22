@@ -4,7 +4,7 @@ import { X, Plus, Trash2 } from 'lucide-react';
 import { generateId } from '../utils/grading';
 
 interface GroupFormProps {
-  group?: Group;
+  group?: Group | null;
   onSave: (group: Group | Omit<Group, 'id'>) => void;
   onCancel: () => void;
 }
@@ -15,34 +15,74 @@ export const GroupForm: React.FC<GroupFormProps> = ({
   onCancel,
 }) => {
   const [name, setName] = useState(group?.name || '');
-  const [learnerNames, setLearnerNames] = useState<string[]>(
-    group?.learners.map(l => l.name) || ['']
-  );
+  const [learners, setLearners] = useState<Array<{name: string, learnerId: string}>>(group?.learners.map(l => ({ name: l.name, learnerId: l.learnerId })) || [{ name: '', learnerId: '1' }]);
+
+  // Get next available learner ID
+  const getNextLearnerId = () => {
+    if (!group?.learners?.length) return '1';
+    const existingIds = group.learners
+      .map(l => parseInt(l.learnerId))
+      .filter(id => !isNaN(id))
+      .sort((a, b) => a - b);
+    
+    let nextId = 1;
+    for (const id of existingIds) {
+      if (id === nextId) {
+        nextId++;
+      } else {
+        break;
+      }
+    }
+    return nextId.toString();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
-    const validLearnerNames = learnerNames.filter(n => n.trim());
-    if (validLearnerNames.length === 0) return;
+    // Validate all learner IDs are unique
+    const learnerIds = learners.map(l => l.learnerId.trim()).filter(Boolean);
+    const uniqueIds = new Set(learnerIds);
+    if (learnerIds.length !== uniqueIds.size) {
+      alert('Each Learner ID must be unique within the group.');
+      return;
+    }
 
-    const learners = validLearnerNames.map((learnerName, index) => ({
-      id: group?.learners[index]?.id || generateId(),
-      name: learnerName.trim(),
-      scores: group?.learners[index]?.scores || {},
-    }));
+    const validLearners = learners
+      .filter(l => l.name.trim() && l.learnerId.trim())
+      .map((learner, index) => ({
+        id: group?.learners[index]?.id || generateId(),
+        name: learner.name.trim(),
+        learnerId: learner.learnerId.trim(),
+        scores: group?.learners[index]?.scores || {},
+      }));
+
+    if (validLearners.length === 0) {
+      alert('Please add at least one valid learner with both name and learner ID.');
+      return;
+    }
 
     const defaultColumns: ScoreColumn[] = [
       {
-        id: 'learner',
-        name: 'Learner',
+        id: 'learnerId',
+        name: 'Learner ID',
+        type: 'score' as const,
+      },
+      {
+        id: 'learnerName',
+        name: 'Learner Name',
+        type: 'score' as const,
+      },
+      {
+        id: 'newColumn',
+        name: 'New Column',
         type: 'score' as const,
       },
     ];
 
     const groupData = {
       name: name.trim(),
-      learners,
+      learners: validLearners,
       columns: group?.columns || defaultColumns,
     };
 
@@ -54,18 +94,18 @@ export const GroupForm: React.FC<GroupFormProps> = ({
   };
 
   const addLearner = () => {
-    setLearnerNames([...learnerNames, '']);
+    setLearners([...learners, { name: '', learnerId: getNextLearnerId() }]);
   };
 
-  const updateLearnerName = (index: number, name: string) => {
-    const updated = [...learnerNames];
-    updated[index] = name;
-    setLearnerNames(updated);
+  const updateLearner = (index: number, field: 'name' | 'learnerId', value: string) => {
+    const updated = [...learners];
+    updated[index] = { ...updated[index], [field]: value };
+    setLearners(updated);
   };
 
   const removeLearner = (index: number) => {
-    if (learnerNames.length > 1) {
-      setLearnerNames(learnerNames.filter((_, i) => i !== index));
+    if (learners.length > 1) {
+      setLearners(learners.filter((_, i) => i !== index));
     }
   };
 
@@ -115,20 +155,28 @@ export const GroupForm: React.FC<GroupFormProps> = ({
             </div>
             
             <div className="space-y-2 max-h-60 overflow-y-auto">
-              {learnerNames.map((learnerName, index) => (
+              {learners.map((learner, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <input
                     type="text"
-                    value={learnerName}
-                    onChange={(e) => updateLearnerName(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    placeholder={`Learner ${index + 1} name`}
+                    value={learner.learnerId}
+                    onChange={(e) => updateLearner(index, 'learnerId', e.target.value)}
+                    className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="Learner ID"
                   />
-                  {learnerNames.length > 1 && (
+                  <input
+                    type="text"
+                    value={learner.name}
+                    onChange={(e) => updateLearner(index, 'name', e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder={`Learner name`}
+                  />
+                  {learners.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeLearner(index)}
-                      className="text-red-500 hover:text-red-700 p-1"
+                      className="text-red-500 hover:text-red-700 p-2"
+                      title="Remove learner"
                     >
                       <Trash2 size={16} />
                     </button>

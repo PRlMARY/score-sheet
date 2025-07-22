@@ -18,7 +18,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Subjects</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your courses and student groups</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your courses and learner groups</p>
         </div>
         <button
           onClick={onCreateSubject}
@@ -35,7 +35,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             <BookOpen size={48} className="text-gray-400 dark:text-gray-500" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No subjects yet</h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">Create your first subject to start managing student scores and grades</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">Create your first subject to start managing learner scores and grades</p>
           <button
             onClick={onCreateSubject}
             className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-xl transition-all duration-200 shadow-soft hover:shadow-soft-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"

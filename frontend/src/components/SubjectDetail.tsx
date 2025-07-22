@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Subject, Group } from '../types';
+import type { Subject, Group } from '../types';
 import { ArrowLeft, Plus, Users, Settings, Trash2 } from 'lucide-react';
 import { GroupForm } from './GroupForm';
 import { ScoreTable } from './ScoreTable';
@@ -37,7 +37,11 @@ export const SubjectDetail: React.FC<SubjectDetailProps> = ({
     setShowGroupForm(false);
   };
 
-  const handleUpdateGroup = (updatedGroup: Group) => {
+  const handleUpdateGroup = (updatedGroup: Group | Omit<Group, 'id'>) => {
+    if (!('id' in updatedGroup) || !updatedGroup.id) {
+      return handleCreateGroup(updatedGroup);
+    }
+    
     const updatedSubject = {
       ...subject,
       groups: subject.groups.map(g => g.id === updatedGroup.id ? updatedGroup : g),
