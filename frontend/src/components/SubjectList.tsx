@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Subject } from '../types';
+import type { Subject } from '../interfaces';
 import { BookOpen, Users, Calendar, Plus } from 'lucide-react';
 
 interface SubjectListProps {
@@ -63,12 +63,6 @@ export const SubjectList: React.FC<SubjectListProps> = ({
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                 {subject.name}
               </h3>
-              
-              {subject.description && (
-                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                  {subject.description}
-                </p>
-              )}
               
               <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-100 dark:border-gray-700">
                 <div className="flex items-center gap-2">

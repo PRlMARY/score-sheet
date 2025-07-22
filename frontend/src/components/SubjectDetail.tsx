@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Subject, Group } from '../types';
+import type { Subject, Group } from '../interfaces';
 import { ArrowLeft, Plus, Users, Settings, Trash2 } from 'lucide-react';
 import { GroupForm } from './GroupForm';
 import { ScoreTable } from './ScoreTable';
@@ -26,13 +26,13 @@ export const SubjectDetail: React.FC<SubjectDetailProps> = ({
       ...groupData,
       id: Math.random().toString(36).substr(2, 9),
     };
-    
+
     const updatedSubject = {
       ...subject,
       groups: [...subject.groups, newGroup],
       updatedAt: new Date(),
     };
-    
+
     onUpdateSubject(updatedSubject);
     setShowGroupForm(false);
   };
@@ -41,16 +41,16 @@ export const SubjectDetail: React.FC<SubjectDetailProps> = ({
     if (!('id' in updatedGroup) || !updatedGroup.id) {
       return handleCreateGroup(updatedGroup);
     }
-    
+
     const updatedSubject = {
       ...subject,
       groups: subject.groups.map(g => g.id === updatedGroup.id ? updatedGroup : g),
       updatedAt: new Date(),
     };
-    
+
     onUpdateSubject(updatedSubject);
     setEditingGroup(null);
-    
+
     if (selectedGroup?.id === updatedGroup.id) {
       setSelectedGroup(updatedGroup);
     }
@@ -63,9 +63,9 @@ export const SubjectDetail: React.FC<SubjectDetailProps> = ({
         groups: subject.groups.filter(g => g.id !== groupId),
         updatedAt: new Date(),
       };
-      
+
       onUpdateSubject(updatedSubject);
-      
+
       if (selectedGroup?.id === groupId) {
         setSelectedGroup(null);
       }
@@ -93,14 +93,9 @@ export const SubjectDetail: React.FC<SubjectDetailProps> = ({
           >
             <ArrowLeft size={24} />
           </button>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{subject.name}</h1>
-            {subject.description && (
-              <p className="text-gray-600 mt-1">{subject.description}</p>
-            )}
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900">{subject.name}</h1>
         </div>
-        
+
         <div className="flex gap-2">
           <button
             onClick={onEditSubject}
@@ -175,16 +170,16 @@ export const SubjectDetail: React.FC<SubjectDetailProps> = ({
                   </button>
                 </div>
               </div>
-              
+
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 {group.name}
               </h3>
-              
+
               <div className="text-sm text-gray-500 mb-4">
                 <p>{group.learners.length} learners</p>
                 <p>{group.columns.filter(c => c.type === 'score').length} score columns</p>
               </div>
-              
+
               <button
                 onClick={() => setSelectedGroup(group)}
                 className="w-full bg-primary-50 hover:bg-primary-100 text-primary-700 py-2 px-4 rounded-lg transition-colors"

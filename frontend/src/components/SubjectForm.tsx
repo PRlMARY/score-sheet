@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Subject, GradingCriteria } from '../types';
+import type { Subject, GradingCriteria } from '../interfaces';
 import { defaultGradingCriteria, generateId } from '../utils/grading';
 import { X, Plus, Trash2 } from 'lucide-react';
 
@@ -15,7 +15,7 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
   onCancel,
 }) => {
   const [name, setName] = useState(subject?.name || '');
-  const [description, setDescription] = useState(subject?.description || '');
+
   const [gradingCriteria, setGradingCriteria] = useState<GradingCriteria[]>(
     subject?.gradingCriteria || defaultGradingCriteria
   );
@@ -26,7 +26,7 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
 
     onSave({
       name: name.trim(),
-      description: description.trim(),
+
       gradingCriteria,
       groups: subject?.groups || [],
     });
@@ -79,19 +79,6 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="e.g., Computer Programming"
               required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="Brief description of the subject..."
             />
           </div>
 

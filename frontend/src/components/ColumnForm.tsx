@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import type { ScoreColumn, ColumnType } from '../types';
+import type { ScoreColumn } from '../interfaces';
+import type { ColumnType } from '../type.d.ts';
 import { X, Calculator, Award, Hash } from 'lucide-react';
 
 interface ColumnFormProps {

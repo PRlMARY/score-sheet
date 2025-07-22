@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Group, ScoreColumn } from '../types';
+import type { Group, ScoreColumn } from '../interfaces';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { generateId } from '../utils/grading';
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { Group, GradingCriteria, ScoreColumn, ColumnType } from '../types';
+import type { Group, GradingCriteria, ScoreColumn } from '../interfaces';
+import type { ColumnType } from '../type.d.ts';
 import { ArrowLeft, Plus, Settings, Trash2, Calculator, Award, Edit, UserPlus } from 'lucide-react';
 import { calculateSum, calculateGrade, getGradeColor, generateId } from '../utils/grading';
 import { ColumnForm } from './ColumnForm';
