@@ -39,7 +39,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onSwitchToSignIn }) => {
       return;
     }
 
-    const success = await signUp(username.trim(), password);
+    const success = await signUp(username.trim(), password, confirmPassword.trim());
     if (!success) {
       setError('Username already exists');
     }

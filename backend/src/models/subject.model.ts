@@ -3,6 +3,7 @@ import type { IGradingCriteria } from './gradingCriteria.model';
 import type { IGroup } from './group.model';
 
 export interface ISubject extends Document {
+    _id: string;
     name: string;
     gradingCriteria: Types.ObjectId[] | IGradingCriteria[];
     groups: Types.ObjectId[] | IGroup[];

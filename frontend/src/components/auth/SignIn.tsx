@@ -10,6 +10,7 @@ export const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const { signIn, isLoading } = useAuth();
 
@@ -22,7 +23,7 @@ export const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp }) => {
       return;
     }
 
-    const success = await signIn(username.trim(), password);
+    const success = await signIn(username.trim(), password, rememberMe);
     if (!success) {
       setError('Invalid username or password');
     }
@@ -96,6 +97,20 @@ export const SignIn: React.FC<SignInProps> = ({ onSwitchToSignUp }) => {
                   )}
                 </button>
               </div>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                Remember me for 7 days
+              </label>
             </div>
 
             <div>
